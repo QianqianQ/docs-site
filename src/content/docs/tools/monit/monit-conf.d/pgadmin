@@ -1,0 +1,5 @@
+# pgadmin configuration for servers
+check host pgadmin-webpage with address xxx
+    if failed
+        port 5050 protocol http
+    then exec "/bin/bash /etc/monit/sh/pgadmin.sh start"

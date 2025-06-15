@@ -1,0 +1,10 @@
+.content-panel {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .main-frame {
+    max-width: none !important;
+  }
+  .sl-container {
+    max-width: none !important;
+  }

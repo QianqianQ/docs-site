@@ -6,8 +6,8 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	integrations: [
 		starlight({
-			title: 'My Docs',
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }],
+			title: 'Developer Docs',
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/QianqianQ' }],
 			sidebar: [
 				{
 					label: 'Guides',
@@ -16,9 +16,25 @@ export default defineConfig({
 						{ label: 'Example Guide', slug: 'guides/example' },
 					],
 				},
+				// {
+				// 	label: 'Reference',
+				// 	autogenerate: { directory: 'reference' },
+				// },
 				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
+					label: 'Python',
+					autogenerate: { directory: 'python' },
+				},
+				{
+					label: 'Web Development',
+					autogenerate: { directory: 'web-development' },
+				},
+				{
+					label: 'Databases',
+					autogenerate: { directory: 'databases' },
+				},
+				{
+					label: 'Tools',
+					autogenerate: { directory: 'tools' },
 				},
 			],
 		}),

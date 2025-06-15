@@ -1,0 +1,16 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title><slot name="title" /></title>
+  </head>
+  <body>
+    <div class="content-panel">
+      <slot />
+    </div>
+    <style>
+        :root {
+          --sl-content-width: 70% !important;
+        }
+    </style>
+  </body>
+</html>

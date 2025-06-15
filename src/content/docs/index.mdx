@@ -1,36 +1,58 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash
-hero:
-  tagline: Congrats on setting up a new Starlight project!
-  image:
-    file: ../../assets/houston.webp
-  actions:
-    - text: Example Guide
-      link: /guides/example/
-      icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
-      variant: minimal
+title: Developer Documentation Hub
+description: Developer Documentation Hub.
+tableOfContents: false
+head:
+  - tag: style
+    content: ":root { --sl-content-width: 70% !important; }"
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+# 📚 Table of Contents
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="🐍 Python" icon="seti:python">
+		**Fundamentals & Utilities**
+
+		- [Python Fundamentals](/python/fundamentals/python-fundamentals/)
+		- [DateTime Utils](/python/utils/datetime-util/)
+		- [Decorators](/python/utils/decorators/)
+		- [File Utils](/python/utils/file-utils/)
+		- [Graph Drawer](/python/utils/graph-drawer/)
+		- [JSON Utils](/python/utils/json-utils/)
+		- [String Utils](/python/utils/string-utils/)
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+
+	<Card title="🌐 Web Development" icon="seti:html">
+		**Full-Stack Development**
+
+		**Backend:**
+		- [Django](/web-development/backend/django/)
+		- [Flask](/web-development/backend/flask/)
+		- [FastAPI](/web-development/backend/fastapi/)
+
+		**Frontend:**
+		- [Angular Guide](/web-development/frontend/angular/guide/)
+
+		**Testing:**
+		- [Robot Framework](/web-development/testing/robot-framework-selenium/)
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
+
+	<Card title="🗄️ Databases" icon="seti:db">
+		**Database Management**
+
+		- [PostgreSQL](/databases/postgres/)
 	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+
+	<Card title="🛠️ DevOps Tools" icon="seti:config">
+		**Development & Operations**
+
+		- [Docker](/tools/docker/)
+		- [Git](/tools/git/)
+		- [Jenkins](/tools/jenkins/)
+		- [Linux](/tools/linux/)
+		- [Ansible](/tools/ansible/)
+		- [Monit](/tools/monit/)
 	</Card>
 </CardGrid>

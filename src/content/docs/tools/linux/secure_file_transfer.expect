@@ -1,0 +1,22 @@
+#!/usr/bin/expect -f
+# This script automates secure file transfer (SCP) using Expect to handle password prompts
+# It takes 5 arguments: username, IP, password, remote file path, and local destination path
+
+set user [lindex $argv 0]
+set ip [lindex $argv 1] 
+set pw [lindex $argv 2]
+set remote_path [lindex $argv 3]
+set local_path [lindex $argv 4]
+
+# Initiate secure copy process
+spawn scp $user@$ip:$remote_path $local_path
+
+# Handle authentication
+expect {
+    "password:" { send "$pw\r" }  # Send password when prompted
+    timeout { exit 1 }            # Exit if no prompt within timeout
+    eof { exit }                  # Handle unexpected connection closure
+}
+
+# Wait for transfer completion
+expect eof

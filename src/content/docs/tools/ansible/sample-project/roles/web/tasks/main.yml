@@ -1,0 +1,65 @@
+---
+
+- name: Check deployment app type and register var
+  shell: echo "{{ hostvars['localhost']['deploy_app'] }}"
+  register: DEPLOY_READ
+
+- set_fact:
+    db_server_host={{inventory_hostname}}
+    db_server_user={{super_user_name}}
+    db_server_pass={{super_user_pass}}
+  when: db_server == ansible_hostname
+
+- debug:
+    msg:
+    - "webapp hostname: '{{ansible_hostname}}', host: '{{inventory_hostname}}'"
+    - "DB server: '{{db_server}}', '{{db_server_host}}'"
+    - "Ubuntu version: '{{ansible_distribution_version}}'"
+
+- name: Install dependencies for Ubuntu 22.04
+  apt:
+    pkg:
+      - 'python3-openssl'
+      - 'apache2'
+    state: present
+  become: yes
+  when: ansible_distribution_version == "22.04"
+
+- name: Set production specific environment variables for django
+  template:
+    src: "env.j2"
+    dest: "{{ app_dir }}app/app/env.py"
+  become: yes
+
+- name: Write the Apache2 config file
+  template:
+    src: "server.j2"
+    dest: /etc/apache2/sites-available/server.conf
+  notify:
+    - a2dissite 000-default.conf
+    - a2ensite server.conf
+    - restart apache2
+  become: yes
+
+- name: Create databases
+  command: sshpass -p {{ db_server_pass }} ssh -oStrictHostKeyChecking=no -oHostKeyAlgorithms=+ssh-rsa -t "{{ db_server_user }}@{{ db_server_host }}"
+    "cd / && echo {{ db_server_pass }} | sudo -S -u postgres createdb -O {{ item.user }} -E 'UTF8' {{ item.db_name  }}"
+  with_items:
+  - { user: "{{ db[ansible_hostname]['default_user'] }}",
+      db_name: "{{ db[ansible_hostname]['default_name'] }}" }
+  become: yes
+
+- name: Stop Apache
+  become: yes
+  service:
+    name: apache2
+    state: stopped
+
+- name: Sleep 10s
+  command: sleep 10s
+
+- name: Start Apache
+  become: yes
+  service:
+    name: apache2
+    state: started

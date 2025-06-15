@@ -1,0 +1,22 @@
+---
+
+- name: Pre deploy local actions
+  hosts: localhost
+
+  vars:
+    deploy_app: "{{ deploy_app }}"
+
+- name: Configure and deploy server and application code
+  hosts: host
+
+  roles:
+    - web
+
+- name: local actions
+  hosts: localhost
+
+  vars:
+    WEBSERVER: "host"
+
+  roles:
+    - production

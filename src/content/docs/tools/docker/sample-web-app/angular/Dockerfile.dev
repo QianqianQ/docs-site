@@ -1,0 +1,27 @@
+# base image
+FROM node:14.15.0 AS node
+
+# RUN mkdir /app
+# set working directory
+WORKDIR /app
+
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install and cache app dependencies
+COPY package*.json .
+RUN npm install
+# RUN npm install -g angular-cli
+# RUN npm ci
+
+# add app
+COPY . .
+
+# Webpack uses a port to do live reload of the application. That port is 49153 by default.
+# You have to expose and bind that port in the container to the host port and that should solve your
+EXPOSE 4200 49153
+
+# start app
+# --poll 2000: client will check every 2000 milliseconds whether a change has been made
+CMD ["ng", "serve", "--host", "0.0.0.0", "--disable-host-check"]
+# CMD ["npm", "start"]

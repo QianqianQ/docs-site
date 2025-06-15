@@ -1,0 +1,85 @@
+---
+
+- name: Build and deploy Sphinx documentation
+  hosts: localhost  # Build and compress the Sphinx docs locally
+  tasks:
+    - name: Ensure Sphinx is installed locally
+      pip:
+        name: sphinx
+        state: present
+
+    - name: Remove existing _build directory
+      ansible.builtin.file:
+        path: "{{ sphinx_build_dir }}"
+        state: absent
+
+    - name: Build Sphinx documentation
+      ansible.builtin.command:
+        cmd: make html
+      args:
+        chdir: "{{ playbook_dir }}"  # Ensure the command runs from the project root
+
+    - name: Compress the Sphinx documentation
+      ansible.builtin.command: >
+        tar -czf {{local_compression_file_path}} -C {{sphinx_build_dir}}/html .
+
+- name: Deploy Sphinx documentation to a remote server
+  hosts: "{{ target_host }}"    # Run tasks in the targeted remote host
+  become: yes                   # Run tasks with sudo privileges
+  tasks:
+    - name: Remove existing docs tar file and directory in the remote server
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ remote_compression_file_path }}"
+        - "{{ remote_docs_dir }}"
+
+    - name: Upload compressed Sphinx documentation to the remote server
+      ansible.builtin.copy:
+        src: "{{ local_compression_file_path }}"
+        dest: "{{ remote_compression_file_path }}"
+        owner: "{{ansible_user}}"
+        group: "{{ansible_user}}"
+        mode: '0644'
+
+    - name: Ensure new docs directory is created
+      file:
+        path: "{{remote_docs_dir}}"
+        state: directory
+        mode: '0755'
+
+    - name: Decompress the Sphinx documentation on the remote server
+      ansible.builtin.command: >
+        tar -xzf {{remote_compression_file_path}} -C {{remote_docs_dir}}
+
+    - name: Ensure the Sphinx docs directory exists on the remote server
+      file:
+        path: "{{ remote_docs_dir }}"
+        state: directory
+        owner: "{{ansible_user}}"
+        group: "{{ansible_user}}"
+        mode: '0755'
+
+    - name: Ensure Apache2 is installed in the remote server
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Upload Apache2 configuration file to the remote server
+      ansible.builtin.copy:
+        src: "{{ apache2_conf_src }}"
+        dest: "{{ apache2_conf_dest }}"
+        owner: "{{ansible_user}}"
+        group: "{{ansible_user}}"
+        mode: '0644'
+
+    - name: Enable Apache2 site configuration in the remote server
+      ansible.builtin.command:
+        cmd: a2ensite {{ apache2_conf_name }}
+
+    - name: Reload Apache2 to apply changes in the remote server
+      ansible.builtin.service:
+        name: apache2
+        state: reloaded
